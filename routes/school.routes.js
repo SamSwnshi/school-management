@@ -3,7 +3,7 @@ const db = require("../db/db");
 
 const router = express.Router();
 
-const haversine = `
+const haversine_formula = `
     (6371 * ACOS(
         COS(RADIANS(?)) * COS(RADIANS(latitude)) *
         COS(RADIANS(longitude) - RADIANS(?)) +
@@ -68,12 +68,67 @@ router.post("/addSchool", async (req, res) => {
         });
     } catch (error) {
         console.error("Database error on /addSchool:", error);
-        res
-            .status(500)
+        res.status(500).json({
+            success: false,
+            error: "Failed to add school due to a server error.",
+        });
+    }
+});
+
+router.get("/schoolList", async (req, res) => {
+    const { lat, long } = req.query;
+    const userLat = parseFloat(lat);
+    const userLng = parseFloat(long);
+
+    if (!isValidCoordinate(userLat, -90, 90)) {
+        return res
+            .status(400)
             .json({
                 success: false,
-                error: "Failed to add school due to a server error.",
+                message:
+                    "Validation failed: User latitude (lat) is required and must be between -90 and 90.",
             });
+    }
+    if (!isValidCoordinate(userLng, -180, 180)) {
+        return res
+            .status(400)
+            .json({
+                success: false,
+                message:
+                    "Validation failed: User longitude (lng) is required and must be between -180 and 180.",
+            });
+    }
+
+    const sql = `
+        SELECT 
+            id, name, address, latitude, longitude,
+            ${haversine_formula}
+        FROM schools
+        ORDER BY distance_km ASC
+    `;
+
+    const values = [userLat, userLng, userLat];
+    try {
+        const [schools] = await db.execute(sql, values);
+
+        const schoolsFormatted = schools.map(school => ({
+            id: school.id,
+            name: school.name,
+            address: school.address,
+            latitude: school.latitude,
+            longitude: school.longitude,
+            distance_km: parseFloat(school.distance_km.toFixed(2)) 
+        }));
+
+        res.status(200).json({
+            success: true,
+            total_schools: schoolsFormatted.length,
+            userLocation: { lat: userLat, lng: userLng },
+            schools: schoolsFormatted
+        });
+    } catch (error) {
+        console.error('Database error on /listSchools:', error);
+        res.status(500).json({ success: false, error: 'Failed to retrieve schools due to a server error.' });
     }
 });
 
