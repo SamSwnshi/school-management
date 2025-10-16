@@ -84,10 +84,10 @@ Base URL: `http://localhost:8080/api`
 - Body (JSON):
 ```json
 {
-  "name": "Springfield Elementary",
-  "address": "742 Evergreen Terrace, Springfield",
-  "latitude": 40.73061,
-  "longitude": -73.935242
+    "name": "Northwood Convent",
+    "address": "Barakhamba Road, Bengaluru, New Delhi ",
+    "latitude": 28.6273,
+    "longitude": 77.2285
 }
 ```
 - Success (201):
@@ -97,8 +97,8 @@ Base URL: `http://localhost:8080/api`
   "message": "School added successfully.",
   "school": {
     "id": 1,
-    "name": "Springfield Elementary",
-    "address": "742 Evergreen Terrace, Springfield"
+    "name": "Northwood Convent",
+    "address": "Barakhamba Road, Bengaluru, New Delhi"
   }
 }
 ```
@@ -109,11 +109,11 @@ cURL example:
 curl -X POST http://localhost:8080/api/addSchool \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Springfield Elementary",
-    "address": "742 Evergreen Terrace, Springfield",
-    "latitude": 40.73061,
-    "longitude": -73.935242
-  }'
+    "name": "Northwood Convent",
+    "address": "Barakhamba Road, Bengaluru, New Delhi ",
+    "latitude": 28.6273,
+    "longitude": 77.2285
+}'
 ```
 
 ### List schools by distance
@@ -125,19 +125,78 @@ curl -X POST http://localhost:8080/api/addSchool \
 - Success (200):
 ```json
 {
-  "success": true,
-  "total_schools": 2,
-  "userLocation": { "lat": 40.73, "lng": -73.93 },
-  "schools": [
-    {
-      "id": 5,
-      "name": "Springfield Elementary",
-      "address": "742 Evergreen Terrace, Springfield",
-      "latitude": 40.73061,
-      "longitude": -73.935242,
-      "distance_km": 0.42
-    }
-  ]
+    "success": true,
+    "total_schools": 8,
+    "userLocation": {
+        "lat": 28.6273,
+        "lng": 77.2285
+    },
+    "schools": [
+        {
+            "id": 7,
+            "name": "Northwood Convent",
+            "address": "Barakhamba Road, Bengaluru, New Delhi ",
+            "latitude": "28.62730000",
+            "longitude": "77.22850000",
+            "distance_km": 0
+        },
+        {
+            "id": 8,
+            "name": "Northwood Convent",
+            "address": "Barakhamba Road, Bengaluru, New Delhi ",
+            "latitude": "28.62730000",
+            "longitude": "77.22850000",
+            "distance_km": 0
+        },
+        {
+            "id": 6,
+            "name": "Royal Military Academy",
+            "address": "The Fort, Bengaluru, Gwalior ",
+            "latitude": "26.21240000",
+            "longitude": "78.17720000",
+            "distance_km": 284.38
+        },
+        {
+            "id": 3,
+            "name": "Bombay Scottish Academy",
+            "address": "Mahim West, Mumbai, Maharashtra 400016",
+            "latitude": "19.04350000",
+            "longitude": "72.84270000",
+            "distance_km": 1154.94
+        },
+        {
+            "id": 5,
+            "name": "Heritage Public School",
+            "address": "Jubilee Hills,, Bengaluru, Hyderabad ",
+            "latitude": "17.43230000",
+            "longitude": "78.38460000",
+            "distance_km": 1250.41
+        },
+        {
+            "id": 2,
+            "name": "Star International School",
+            "address": "17, Rawdon St, Kolkata, West Bengal 700017",
+            "latitude": "22.54480000",
+            "longitude": "88.34260000",
+            "distance_km": 1302.75
+        },
+        {
+            "id": 1,
+            "name": "Global Knowledge Center",
+            "address": "Bannerghatta Road",
+            "latitude": "12.87970000",
+            "longitude": "77.59460000",
+            "distance_km": 1751.46
+        },
+        {
+            "id": 4,
+            "name": "Global Knowledge Center",
+            "address": "Koppa-harapanhalli Road, Bengaluru, Karnataka 560105",
+            "latitude": "12.87970000",
+            "longitude": "77.59460000",
+            "distance_km": 1751.46
+        }
+    ]
 }
 ```
 - Validation errors (400) and server errors (500) return a JSON with `success: false` and a message.
@@ -174,10 +233,6 @@ Tip: If you prefer auto-restart during development, install nodemon globally or 
 - **SSL Issues**: Verify SSL certificate path in `DB_SSL_CA` environment variable
 - **Firewall**: Ensure port 3306 is accessible
 
-**Common Error: `Access denied for user`**
-- Verify username and password in `.env` file
-- Check if user has proper permissions
-- For cloud databases, ensure user exists and has database access
 
 ### Testing Database Connection
 You can test your database connection by running:
